@@ -28,6 +28,7 @@ import org.hl7.fhir.r5.renderers.ConceptMapRenderer.CollateralDefinition;
 import org.hl7.fhir.r5.renderers.utils.RenderingContext;
 import org.hl7.fhir.r5.renderers.utils.Resolver.ResourceContext;
 import org.hl7.fhir.r5.utils.ToolingExtensions;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.utilities.xhtml.NodeType;
@@ -428,7 +429,7 @@ public class ConceptMapRenderer extends TerminologyRenderer {
           tr = tbl.tr();
           XhtmlNode td = tr.td();
           td.addText(ccl.getCode());
-          display = ccl.hasDisplay() ? ccl.getDisplay() : getDisplayForConcept(systemFromCanonical(grp.getSource()), versionFromCanonical(grp.getSource()), ccl.getCode());
+          display = ccl.hasDisplay() ? ccl.getDisplay() : getDisplayForConcept(grp.getSource(), ccl.getCode());
           if (display != null && !isSameCodeAndDisplay(ccl.getCode(), display))
             td.tx(" ("+display+")");
           if (ccl.getNoMap()) {
@@ -447,7 +448,7 @@ public class ConceptMapRenderer extends TerminologyRenderer {
             }
             td = tr.td();
             td.addText(ccm.getCode());
-            display = ccm.hasDisplay() ? ccm.getDisplay() : getDisplayForConcept(systemFromCanonical(grp.getTarget()), versionFromCanonical(grp.getTarget()), ccm.getCode());
+            display = ccm.hasDisplay() ? ccm.getDisplay() : getDisplayForConcept(grp.getTarget(), ccm.getCode());
             if (display != null && !isSameCodeAndDisplay(ccm.getCode(), display))
               td.tx(" ("+display+")");
             if (comment)
@@ -539,7 +540,7 @@ public class ConceptMapRenderer extends TerminologyRenderer {
               td.addText(ccl.getCode());
             else
               td.addText(grp.getSource()+" / "+ccl.getCode());
-            display = ccl.hasDisplay() ? ccl.getDisplay() : getDisplayForConcept(systemFromCanonical(grp.getSource()), versionFromCanonical(grp.getSource()), ccl.getCode());
+            display = ccl.hasDisplay() ? ccl.getDisplay() : getDisplayForConcept(grp.getSource(), ccl.getCode());
             tr.td().style("border-left-width: 0px").tx(display == null ? "" : display);
             tr.td().colspan("4").style("background-color: #efefef").tx("(not mapped)");
 
@@ -560,7 +561,7 @@ public class ConceptMapRenderer extends TerminologyRenderer {
                   td.addText(ccl.getCode());
                 else
                   td.addText(grp.getSource()+" / "+ccl.getCode());
-                display = ccl.hasDisplay() ? ccl.getDisplay() : getDisplayForConcept(systemFromCanonical(grp.getSource()), versionFromCanonical(grp.getSource()), ccl.getCode());
+                display = ccl.hasDisplay() ? ccl.getDisplay() : getDisplayForConcept(grp.getSource(), ccl.getCode());
                 td = tr.td();
                 if (!last)
                   td.style("border-left-width: 0px; border-bottom-style: none");
@@ -603,7 +604,7 @@ public class ConceptMapRenderer extends TerminologyRenderer {
                 td.addText(ccm.getCode());
               else
                 td.addText(grp.getTarget()+" / "+ccm.getCode());
-              display = ccm.hasDisplay() ? ccm.getDisplay() : getDisplayForConcept(systemFromCanonical(grp.getTarget()), versionFromCanonical(grp.getTarget()), ccm.getCode());
+              display = ccm.hasDisplay() ? ccm.getDisplay() : getDisplayForConcept(grp.getSource(), ccm.getCode());
               tr.td().style("border-left-width: 0px").tx(display == null ? "" : display);
 
               for (String s : targets.keySet()) {
