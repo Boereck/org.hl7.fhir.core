@@ -57,6 +57,7 @@ import org.hl7.fhir.r5.terminologies.utilities.TerminologyServiceErrorClass;
 import org.hl7.fhir.r5.terminologies.utilities.ValidationResult;
 import org.hl7.fhir.r5.terminologies.utilities.TerminologyCache.CacheToken;
 import org.hl7.fhir.r5.utils.ToolingExtensions;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.LoincLinker;
 import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.utilities.i18n.I18nConstants;
@@ -506,8 +507,9 @@ public class ValueSetRenderer extends TerminologyRenderer {
   }
 
   private void expRef(XhtmlNode x, String u, String v, Resource source) {
-    String t = u.contains("|") ? u.substring(0, u.indexOf("|")) : u;
-    u = u.substring(u.indexOf("|")+1);
+    var split = CanonicalPair.of(u);
+    String t = split.getUrl();
+    u = split.getVersionOr(u);
     // TODO Auto-generated method stub
     if (u.equals("http://snomed.info/sct")) {
       String[] parts = v.split("\\/");

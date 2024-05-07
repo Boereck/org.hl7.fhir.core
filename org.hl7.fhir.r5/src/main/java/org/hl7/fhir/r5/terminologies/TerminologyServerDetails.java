@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hl7.fhir.r5.model.Enumerations.FHIRVersion;
+import org.hl7.fhir.utilities.CanonicalPair;
 
 public class TerminologyServerDetails {
   public enum ServerAuthorizationMethod {
@@ -20,9 +21,10 @@ public class TerminologyServerDetails {
   
   public boolean handlesSystem(String uri, String version) {
     for (String s : codeSystems) {
-      if (s.contains("|")) {
-        String u = s.substring(0, s.lastIndexOf("|"));
-        String v = s.substring(s.lastIndexOf("|")+1);
+      var split = CanonicalPair.of(s);
+      if (split.hasVersion()) {
+        String u = split.getUrl();
+        String v = split.getVersion();
         if (v.equals(version) && (s.equals(uri) || uri.matches(s))) {
           return true;
         }

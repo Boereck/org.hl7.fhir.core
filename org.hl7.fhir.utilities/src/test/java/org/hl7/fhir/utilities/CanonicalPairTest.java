@@ -11,6 +11,11 @@ class CanonicalPairTest {
     var canonical = new CanonicalPair(null);
     assertNull(canonical.getUrl());
     assertNull(canonical.getVersion());
+    assertFalse(canonical.hasVersion());
+    assertFalse(canonical.hasNonEmptyVersion());
+    String expectedVer = "1.0";
+    String actualVer = canonical.getVersionOr(expectedVer);
+    assertEquals(expectedVer, actualVer);
   }
   
   @Test
@@ -18,7 +23,11 @@ class CanonicalPairTest {
     var url = "";
     var canonical = new CanonicalPair(url);
     assertEquals(url, canonical.getUrl());
-    assertNull(canonical.getVersion());
+    assertFalse(canonical.hasVersion());
+    assertFalse(canonical.hasNonEmptyVersion());
+    String expectedVer = "1.0";
+    String actualVer = canonical.getVersionOr(expectedVer);
+    assertEquals(expectedVer, actualVer);
   }
   
   @Test
@@ -27,6 +36,11 @@ class CanonicalPairTest {
     var canonical = new CanonicalPair(url);
     assertEquals(url, canonical.getUrl());
     assertNull(canonical.getVersion());
+    assertFalse(canonical.hasVersion());
+    assertFalse(canonical.hasNonEmptyVersion());
+    String expectedVer = "1.0";
+    String actualVer = canonical.getVersionOr(expectedVer);
+    assertEquals(expectedVer, actualVer);
   }
   
   @Test
@@ -36,6 +50,11 @@ class CanonicalPairTest {
     var canonical = new CanonicalPair(url);
     assertEquals(expectedUrl, canonical.getUrl());
     assertEquals("", canonical.getVersion());
+    assertTrue(canonical.hasVersion());
+    assertFalse(canonical.hasNonEmptyVersion());
+    String alternativeVer = "1.0";
+    String actualVer = canonical.getVersionOr(alternativeVer);
+    assertEquals("", actualVer);
   }
 
   @Test
@@ -46,6 +65,11 @@ class CanonicalPairTest {
     var canonical = new CanonicalPair(url);
     assertEquals(expectedUrl, canonical.getUrl());
     assertEquals(expectedVersion, canonical.getVersion());
+    assertTrue(canonical.hasVersion());
+    assertTrue(canonical.hasNonEmptyVersion());
+    String alternativeVer = "1.0";
+    String actualVer = canonical.getVersionOr(alternativeVer);
+    assertEquals(expectedVersion, actualVer);
   }
 
   @Test
@@ -56,6 +80,11 @@ class CanonicalPairTest {
     var canonical = new CanonicalPair(url);
     assertEquals(expectedUrl, canonical.getUrl());
     assertEquals(expectedVersion, canonical.getVersion());
+    assertTrue(canonical.hasVersion());
+    assertTrue(canonical.hasNonEmptyVersion());
+    String alternativeVer = "1.0";
+    String actualVer = canonical.getVersionOr(alternativeVer);
+    assertEquals(expectedVersion, actualVer);
   }
   
 }

@@ -33,6 +33,8 @@ package org.hl7.fhir.r5.model;
 
 import java.net.URI;
 
+import org.hl7.fhir.utilities.CanonicalPair;
+
 import ca.uhn.fhir.model.api.annotation.DatatypeDef;
 
 /**
@@ -80,12 +82,14 @@ public class CanonicalType extends UriType {
 
   public String baseUrl() {
     var s = primitiveValue();
-    return s == null || !s.contains("|") ? s : s.substring(0, s.indexOf("|"));
+    var split = CanonicalPair.of(s);
+    return split.getUrl();
   }
 
   public String version() {
     var s = primitiveValue();
-    return s == null || !s.contains("|") ? null : s.substring(s.indexOf("|")+1);
+    var split = CanonicalPair.of(s);
+    return split.getVersion();
   }
 	
 

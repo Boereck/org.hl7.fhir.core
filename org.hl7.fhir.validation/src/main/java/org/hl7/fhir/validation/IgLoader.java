@@ -31,6 +31,7 @@ import org.hl7.fhir.r5.model.ImplementationGuide;
 import org.hl7.fhir.r5.model.Resource;
 import org.hl7.fhir.r5.utils.structuremap.StructureMapUtilities;
 import org.hl7.fhir.utilities.ByteProvider;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.IniFile;
 import org.hl7.fhir.utilities.SimpleHTTPClient;
 import org.hl7.fhir.utilities.SimpleHTTPClient.HTTPResult;
@@ -231,11 +232,9 @@ public class IgLoader implements IValidationEngineLoader {
                                           boolean explore) throws FHIRException, IOException {
     //
     if (Common.isNetworkPath(src)) {
-      String v = null;
-      if (src.contains("|")) {
-        v = src.substring(src.indexOf("|") + 1);
-        src = src.substring(0, src.indexOf("|"));
-      }
+      var split = new CanonicalPair(src);
+      String v = split.getVersion();
+      src = split.getUrl();
       String pid = explore ? getPackageCacheManager().getPackageId(src) : null;
       if (!Utilities.noString(pid))
         return fetchByPackage(pid + (v == null ? "" : "#" + v), false);
@@ -433,11 +432,9 @@ public class IgLoader implements IValidationEngineLoader {
                                                      boolean explore,
                                                      VersionSourceInformation versions) throws FHIRException, IOException {
     if (Common.isNetworkPath(src)) {
-      String v = null;
-      if (src.contains("|")) {
-        v = src.substring(src.indexOf("|") + 1);
-        src = src.substring(0, src.indexOf("|"));
-      }
+      var split = new CanonicalPair(src);
+      String v = split.getVersion();
+      src = split.getUrl();
       String pid = getPackageCacheManager().getPackageId(src);
       if (!Utilities.noString(pid)) {
         versions.see(fetchVersionByPackage(pid + (v == null ? "" : "#" + v)), "Package " + src);

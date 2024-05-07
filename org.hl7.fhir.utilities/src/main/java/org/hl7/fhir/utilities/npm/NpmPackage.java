@@ -67,6 +67,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipParameters;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.utilities.ByteProvider;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.SimpleHTTPClient;
 import org.hl7.fhir.utilities.SimpleHTTPClient.HTTPResult;
@@ -1374,8 +1375,9 @@ public class NpmPackage {
     if (url == null) {
       return false;
     }
-    String u = url.contains("|") ?  url.substring(0, url.indexOf("|")) : url;
-    String v = url.contains("|") ?  url.substring(url.indexOf("|")+1) : null;
+    var split = CanonicalPair.of(url);
+    String u = split.getUrl();
+    String v = split.getVersion();
     NpmPackageFolder folder = folders.get("package");
     if (folder != null) {
       for (JsonObject o : folder.index().getJsonObjects("files")) {

@@ -46,6 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.hl7.fhir.dstu2.model.Resource;
 import org.hl7.fhir.dstu2.model.ResourceType;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.Utilities;
 
 //Make resources address subclass of URI
@@ -115,10 +116,11 @@ public class ResourceAddress {
 
   public <T extends Resource> URI resolveGetUriFromResourceClassAndCanonical(Class<T> resourceClass,
       String canonicalUrl) {
-    if (canonicalUrl.contains("|"))
+    var split = new CanonicalPair(canonicalUrl);
+    if (split.hasVersion())
       return baseServiceUri
-          .resolve(nameForClass(resourceClass) + "?url=" + canonicalUrl.substring(0, canonicalUrl.indexOf("|"))
-              + "&version=" + canonicalUrl.substring(canonicalUrl.indexOf("|") + 1));
+          .resolve(nameForClass(resourceClass) + "?url=" + split.getUrl()
+              + "&version=" + split.getVersion());
     else
       return baseServiceUri.resolve(nameForClass(resourceClass) + "?url=" + canonicalUrl);
   }

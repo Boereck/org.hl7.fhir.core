@@ -41,6 +41,7 @@ import org.hl7.fhir.r5.terminologies.CodeSystemUtilities;
 import org.hl7.fhir.r5.utils.EOperationOutcome;
 import org.hl7.fhir.r5.utils.ToolingExtensions;
 import org.hl7.fhir.r5.utils.XVerExtensionManager;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.utilities.xhtml.HierarchicalTableGenerator;
 import org.hl7.fhir.utilities.xhtml.NodeType;
@@ -230,11 +231,12 @@ public abstract class ResourceRenderer extends DataRenderer {
       x.code().tx(url);
     } else {
       CanonicalResource cr = (CanonicalResource) target;
-      if (url.contains("|")) {
+      var split = CanonicalPair.of(url);
+      if (split.hasVersion()) {
         if (target.hasWebPath()) {
           x.ah(target.getWebPath()).tx(cr.present()+/*!#*/" (version "+cr.getVersion()+")");
         } else {
-          url = url.substring(0, url.indexOf("|"));
+          url = split.getUrl();
           x.code().tx(url);
           x.tx(": "+cr.present()+/*!#*/" (version "+cr.getVersion()+")");          
         }

@@ -81,6 +81,7 @@ import org.hl7.fhir.r4b.renderers.utils.RenderingContext;
 import org.hl7.fhir.r4b.renderers.utils.RenderingContext.ResourceRendererMode;
 import org.hl7.fhir.r4b.utils.ToolingExtensions;
 import org.hl7.fhir.r4b.utils.ToolingExtensions;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.MarkDownProcessor;
 import org.hl7.fhir.utilities.MarkDownProcessor.Dialect;
@@ -766,25 +767,27 @@ public class DataRenderer extends Renderer {
   }
 
   protected void renderUri(XhtmlNode x, UriType uri, String path, String id) {
+    String uriVal = uri.getValue();
     if (isCanonical(path)) {
-      x.code().tx(uri.getValue());
+      x.code().tx(uriVal);
     } else {
-      String url = uri.getValue();
+      String url = uriVal;
       if (url == null) {
-        x.b().tx(uri.getValue());
-      } else if (uri.getValue().startsWith("mailto:")) {
-        x.ah(uri.getValue()).addText(uri.getValue().substring(7));
+        x.b().tx(uriVal);
+      } else if (uriVal.startsWith("mailto:")) {
+        x.ah(uriVal).addText(uriVal.substring(7));
       } else {
-        Resource target = context.getContext().fetchResource(Resource.class, uri.getValue());
+        Resource target = context.getContext().fetchResource(Resource.class, uriVal);
         if (target != null && target.hasUserData("path")) {
-          String title = target instanceof CanonicalResource ? ((CanonicalResource) target).present() : uri.getValue();
+          String title = target instanceof CanonicalResource ? ((CanonicalResource) target).present() : uriVal;
           x.ah(target.getUserString("path")).addText(title);
-        } else if (uri.getValue().contains("|")) {
-          x.ah(uri.getValue().substring(0, uri.getValue().indexOf("|"))).addText(uri.getValue());
+        } else if (uriVal.contains("|")) {
+          var split = CanonicalPair.of(uriVal);
+          x.ah(split.getUrl()).addText(uriVal);
         } else if (url.startsWith("http:") || url.startsWith("https:") || url.startsWith("ftp:")) {
-          x.ah(uri.getValue()).addText(uri.getValue());
+          x.ah(uriVal).addText(uriVal);
         } else {
-          x.code().addText(uri.getValue());
+          x.code().addText(uriVal);
         }
       }
     }

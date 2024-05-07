@@ -85,6 +85,7 @@ import org.hl7.fhir.r5.renderers.utils.RenderingContext.ResourceRendererMode;
 import org.hl7.fhir.r5.terminologies.JurisdictionUtilities;
 import org.hl7.fhir.r5.terminologies.utilities.ValidationResult;
 import org.hl7.fhir.r5.utils.ToolingExtensions;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.utilities.VersionUtilities;
@@ -843,7 +844,8 @@ public class DataRenderer extends Renderer implements CodeResolver {
           if (url != null) {          
             x.ah(url).addText(uri);
           } else if (uri.contains("|")) {
-            x.ah(uri.substring(0, uri.indexOf("|"))).addText(uri);
+            var split = CanonicalPair.of(url);
+            x.ah(split.getUrl()).addText(uri);
           } else if (uri.startsWith("http:") || uri.startsWith("https:") || uri.startsWith("ftp:")) {
             x.ah(uri).addText(uri);        
           } else {
@@ -1974,26 +1976,6 @@ public class DataRenderer extends Renderer implements CodeResolver {
       b.append("\r\n");
     }
     return b.toString();
-  }
-
-  protected String versionFromCanonical(String system) {
-    if (system == null) {
-      return null;
-    } else if (system.contains("|")) {
-      return system.substring(0, system.indexOf("|"));
-    } else {
-      return null;
-    }
-  }
-
-  protected String systemFromCanonical(String system) {
-    if (system == null) {
-      return null;
-    } else if (system.contains("|")) {
-      return system.substring(system.indexOf("|")+1);
-    } else {
-      return system;
-    }
   }
 
 

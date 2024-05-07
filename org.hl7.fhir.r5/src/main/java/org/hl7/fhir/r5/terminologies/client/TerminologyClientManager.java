@@ -31,6 +31,7 @@ import org.hl7.fhir.r5.terminologies.utilities.TerminologyCache;
 import org.hl7.fhir.r5.terminologies.utilities.TerminologyCache.SourcedCodeSystem;
 import org.hl7.fhir.r5.terminologies.utilities.TerminologyCache.SourcedValueSet;
 import org.hl7.fhir.r5.utils.ToolingExtensions;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.ToolingClientLogger;
 import org.hl7.fhir.utilities.Utilities;
@@ -467,8 +468,9 @@ public class TerminologyClientManager {
         serverMap.put(server, client);
       }
       client.seeUse(canonical, TerminologyClientContextUseType.readVS);
-      String criteria = canonical.contains("|") ? 
-          "?_format=json&url="+Utilities.URLEncode(canonical.substring(0, canonical.lastIndexOf("|")))+"&version="+Utilities.URLEncode(canonical.substring(canonical.lastIndexOf("|")+1)): 
+      var split = CanonicalPair.of(canonical);
+      String criteria = split.hasVersion() ? 
+          "?_format=json&url="+Utilities.URLEncode(split.getUrl())+"&version="+Utilities.URLEncode(split.getVersion()): 
             "?_format=json&url="+Utilities.URLEncode(canonical);
       request = Utilities.pathURL(client.getAddress(), "ValueSet"+ criteria);
       Bundle bnd = client.getClient().search("ValueSet", criteria);
@@ -547,8 +549,9 @@ public class TerminologyClientManager {
         serverMap.put(server, client);
       }
       client.seeUse(canonical, TerminologyClientContextUseType.readCS);
-      String criteria = canonical.contains("|") ? 
-          "?_format=json&url="+Utilities.URLEncode(canonical.substring(0, canonical.lastIndexOf("|")))+"&version="+Utilities.URLEncode(canonical.substring(canonical.lastIndexOf("|")+1)): 
+      var split = CanonicalPair.of(canonical);
+      String criteria = split.hasVersion() ? 
+          "?_format=json&url="+Utilities.URLEncode(split.getUrl())+"&version="+Utilities.URLEncode(split.getVersion()): 
             "?_format=json&url="+Utilities.URLEncode(canonical);
       request = Utilities.pathURL(client.getAddress(), "CodeSystem"+ criteria);
       Bundle bnd = client.getClient().search("CodeSystem", criteria);

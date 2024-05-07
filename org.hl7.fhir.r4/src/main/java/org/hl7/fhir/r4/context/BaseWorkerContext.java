@@ -57,6 +57,7 @@ import org.hl7.fhir.r4.terminologies.ValueSetExpander.TerminologyServiceErrorCla
 import org.hl7.fhir.r4.terminologies.ValueSetExpander.ValueSetExpansionOutcome;
 import org.hl7.fhir.r4.terminologies.ValueSetExpanderSimple;
 import org.hl7.fhir.r4.utils.ToolingExtensions;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.OIDUtils;
 import org.hl7.fhir.utilities.TranslationServices;
 import org.hl7.fhir.utilities.Utilities;
@@ -738,9 +739,10 @@ public abstract class BaseWorkerContext extends I18nBase implements IWorkerConte
 
       if (uri.startsWith("http:") || uri.startsWith("https:")) {
         String version = null;
-        if (uri.contains("|")) {
-          version = uri.substring(uri.lastIndexOf("|") + 1);
-          uri = uri.substring(0, uri.lastIndexOf("|"));
+        var split = CanonicalPair.of(uri);
+        if (split.hasVersion()) {
+          version = split.getVersion();
+          uri = split.getUrl();
         }
         if (uri.contains("#"))
           uri = uri.substring(0, uri.indexOf("#"));

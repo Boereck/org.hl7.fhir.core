@@ -115,6 +115,7 @@ import org.hl7.fhir.r4b.utils.TranslatingUtilities;
 import org.hl7.fhir.r4b.utils.XVerExtensionManager;
 import org.hl7.fhir.r4b.utils.XVerExtensionManager.XVerExtensionStatus;
 import org.hl7.fhir.r4b.utils.formats.CSVWriter;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.FhirPublication;
 import org.hl7.fhir.utilities.MarkDownProcessor;
@@ -4211,8 +4212,9 @@ public class ProfileUtilities extends TranslatingUtilities {
       if (sd != null && pkp != null) {
         String disp = sd.hasTitle() ? sd.getTitle() : sd.getName();
         String ref = pkp.getLinkForProfile(null, sd.getUrl());
-        if (ref != null && ref.contains("|"))
-          ref = ref.substring(0, ref.indexOf("|"));
+        var split = CanonicalPair.of(ref);
+        if (split.hasVersion())
+          ref = split.getUrl();
         c.addPiece(checkForNoChange(t, gen.new Piece(ref, disp, null)));
       } else
         c.addPiece(checkForNoChange(t, gen.new Piece(null, u, null)));

@@ -184,6 +184,7 @@ import org.hl7.fhir.r5.utils.validation.constants.CodedContentValidationPolicy;
 import org.hl7.fhir.r5.utils.validation.constants.ContainedReferenceValidationPolicy;
 import org.hl7.fhir.r5.utils.validation.constants.IdStatus;
 import org.hl7.fhir.r5.utils.validation.constants.ReferenceValidationPolicy;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.FhirPublication;
 import org.hl7.fhir.utilities.HL7WorkGroups;
@@ -2092,7 +2093,8 @@ public class InstanceValidator extends BaseValidator implements IResourceValidat
   private boolean checkExtension(ValidationContext valContext, List<ValidationMessage> errors, String path, Element resource, Element container, Element element, ElementDefinition def, StructureDefinition profile, NodeStack stack, NodeStack containerStack, String extensionUrl, PercentageTracker pct, ValidationMode mode) throws FHIRException {
     boolean ok = true;
     String url = element.getNamedChildValue("url", false);
-    String u = url.contains("|") ? url.substring(0, url.indexOf("|")) : url;
+    var split = new CanonicalPair(url);
+    String u = split.getUrl();
     boolean isModifier = element.getName().equals("modifierExtension");
     assert def.getIsModifier() == isModifier;
     
@@ -4315,8 +4317,9 @@ public class InstanceValidator extends BaseValidator implements IResourceValidat
     if (target == null) {
       return reference;
     }
-    String uref = reference.contains("|") ? reference.substring(0, reference.lastIndexOf("|")) : reference;
-    String vref = reference.contains("|") ? reference.substring(reference.lastIndexOf("|")+1) : null;
+    var splitRef = new CanonicalPair(reference);
+    String uref = splitRef.getUrl();
+    String vref = splitRef.getVersion();
     if (uref.equals(target.getUrl()) && (vref == null || vref.equals(target.getVersion()))) {
       return "'"+target.present()+"' ("+target.getVersionedUrl()+")";
     }

@@ -17,6 +17,7 @@ import org.hl7.fhir.r5.terminologies.CodeSystemUtilities;
 import org.hl7.fhir.r5.terminologies.utilities.CodingValidationRequest;
 import org.hl7.fhir.r5.terminologies.utilities.TerminologyServiceErrorClass;
 import org.hl7.fhir.r5.terminologies.utilities.ValidationResult;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.utilities.VersionUtilities;
@@ -201,9 +202,11 @@ public class ConceptMapValidator  extends BaseValidator {
         }
         if (ref != null) {
           VSReference res = new VSReference();
-          if (ref.contains("|")) {
-            res.url = ref.substring(0, ref.indexOf("|"));
-            res.version = ref.substring(ref.indexOf("|")+1);
+          
+          var split = new CanonicalPair(ref);
+          if (split.hasVersion()) {
+            res.url = split.getUrl();
+            res.version = split.getVersion();
             res.vs = context.findTxResource(ValueSet.class, res.url, res.version);            
           } else {
             res.url = ref;
@@ -280,8 +283,9 @@ public class ConceptMapValidator  extends BaseValidator {
     if (version != null) {
       res.version = version.primitiveValue(); 
     } else if (res.url.contains("|")) {
-      res.version = res.url.substring(res.url.indexOf("|")+1);
-      res.url = res.url.substring(0, res.url.indexOf("|"));
+      var split = new CanonicalPair(res.url);
+      res.version = split.getVersion();
+      res.url = split.getUrl();
     } else if (vs != null && res.url  != null) {
       for (ConceptSetComponent vsi : vs.getCompose().getInclude()) {
         if (res.url.equals(vsi.getSystem()) && vsi.hasVersion() ) {

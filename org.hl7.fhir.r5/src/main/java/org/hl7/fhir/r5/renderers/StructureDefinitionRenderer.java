@@ -79,6 +79,7 @@ import org.hl7.fhir.r5.renderers.utils.Resolver.ResourceContext;
 import org.hl7.fhir.r5.terminologies.utilities.ValidationResult;
 import org.hl7.fhir.r5.utils.PublicationHacker;
 import org.hl7.fhir.r5.utils.ToolingExtensions;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.MarkDownProcessor;
 import org.hl7.fhir.utilities.StandardsStatus;
@@ -2005,8 +2006,9 @@ public class StructureDefinitionRenderer extends ResourceRenderer {
         }
         String disp = sd.present()+v;
         String ref = context.getPkp().getLinkForProfile(null, sd.getUrl());
-        if (ref != null && ref.contains("|"))
-          ref = ref.substring(0,  ref.indexOf("|"));
+        var split = CanonicalPair.of(ref);
+        if (split.hasVersion())
+          ref = split.getUrl();
         c.addPiece(checkForNoChange(t, gen.new Piece(ref, disp, null)));
       } else
         c.addPiece(checkForNoChange(t, gen.new Piece(null, u, null)));        

@@ -34,6 +34,7 @@ import org.hl7.fhir.r5.utils.validation.constants.BindingKind;
 import org.hl7.fhir.r5.utils.validation.constants.CodedContentValidationPolicy;
 import org.hl7.fhir.r5.utils.validation.constants.ContainedReferenceValidationPolicy;
 import org.hl7.fhir.r5.utils.validation.constants.ReferenceValidationPolicy;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.utilities.VersionUtilities;
 import org.hl7.fhir.utilities.VersionUtilities.VersionURLInfo;
@@ -107,9 +108,8 @@ public class StandAloneValidatorFetcher implements IValidatorResourceFetcher, IV
       return false;
     }
 
-    if (url.contains("|")) {
-      url = url.substring(0, url.lastIndexOf("|"));
-    }
+    var split = new CanonicalPair(url);
+    url = split.getUrl();
 
     if (type != null && type.equals("uri") && isMappingUri(url)) {
       return true;
@@ -141,7 +141,7 @@ public class StandAloneValidatorFetcher implements IValidatorResourceFetcher, IV
         pidList.put(base, pid);
       }
     }
-    ver = url.contains("|") ? url.substring(url.indexOf("|") + 1) : null;
+    ver = split.getVersion();
     if (pid == null && Utilities.startsWithInList(url, "http://hl7.org/fhir", "http://terminology.hl7.org")) {
       urlList.put(url, false);
       return false;
@@ -275,9 +275,9 @@ public class StandAloneValidatorFetcher implements IValidatorResourceFetcher, IV
 
   @Override
   public CanonicalResource fetchCanonicalResource(IResourceValidator validator, Object appContext, String url) throws URISyntaxException {
-    if (url.contains("|")) {
-      url = url.substring(0, url.indexOf("|"));
-    }
+    var split = new CanonicalPair(url);
+    url = split.getUrl();
+
     String[] p = url.split("\\/");
   
     String root = getRoot(p, url);

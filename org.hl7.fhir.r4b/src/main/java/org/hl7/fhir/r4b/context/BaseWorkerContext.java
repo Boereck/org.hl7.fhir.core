@@ -111,6 +111,7 @@ import org.hl7.fhir.r4b.terminologies.ValueSetExpander.ValueSetExpansionOutcome;
 import org.hl7.fhir.r4b.terminologies.ValueSetExpanderSimple;
 import org.hl7.fhir.r4b.utils.ToolingExtensions;
 import org.hl7.fhir.r4b.utils.validation.ValidationContextCarrier;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.OIDUtils;
 import org.hl7.fhir.utilities.TimeTracker;
 import org.hl7.fhir.utilities.ToolingClientLogger;
@@ -554,9 +555,10 @@ public abstract class BaseWorkerContext extends I18nBase implements IWorkerConte
     if (system == null) {
       return null;
     }
-    if (system.contains("|")) {
-      String s = system.substring(0, system.indexOf("|"));
-      String v = system.substring(system.indexOf("|") + 1);
+    var split = CanonicalPair.of(system);
+    if (split.hasVersion()) {
+      String s = split.getUrl();
+      String v = split.getVersion();
       return fetchCodeSystem(s, v);
     }
     CodeSystem cs;

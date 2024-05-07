@@ -94,6 +94,7 @@ import org.hl7.fhir.dstu3.utils.formats.CSVWriter;
 import org.hl7.fhir.exceptions.DefinitionException;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.exceptions.FHIRFormatError;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.utilities.i18n.RenderingI18nContext;
@@ -1816,8 +1817,9 @@ public class ProfileUtilities extends TranslatingUtilities {
           if (sd != null) {
             String disp = sd.hasTitle() ? sd.getTitle() : sd.getName();
             String ref = pkp.getLinkForProfile(null, sd.getUrl());
-            if (ref.contains("|"))
-              ref = ref.substring(0,  ref.indexOf("|"));
+            var split = new CanonicalPair(ref);
+            if (split.hasVersion())
+              ref = split.getUrl();
             c.addPiece(checkForNoChange(t, gen.new Piece(ref, disp, null)));
           } else
             c.addPiece(checkForNoChange(t, gen.new Piece(null, t.getTargetProfile(), null)));

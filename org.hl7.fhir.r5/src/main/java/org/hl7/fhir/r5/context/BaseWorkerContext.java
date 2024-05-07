@@ -138,6 +138,7 @@ import org.hl7.fhir.r5.utils.ResourceUtilities;
 import org.hl7.fhir.r5.utils.ToolingExtensions;
 import org.hl7.fhir.r5.utils.client.EFhirClientException;
 import org.hl7.fhir.r5.utils.validation.ValidationContextCarrier;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.FhirPublication;
 import org.hl7.fhir.utilities.TimeTracker;
 import org.hl7.fhir.utilities.ToolingClientLogger;
@@ -686,9 +687,10 @@ public abstract class BaseWorkerContext extends I18nBase implements IWorkerConte
     if (system == null) {
       return null;
     }
-    if (system.contains("|")) {
-      String s = system.substring(0, system.indexOf("|"));
-      String v = system.substring(system.indexOf("|")+1);
+    var split = CanonicalPair.of(system);
+    if (split.hasVersion()) {
+      String s = split.getUrl();
+      String v = split.getVersion();
       return fetchCodeSystem(s, v);
     }
     CodeSystem cs;
@@ -2097,9 +2099,10 @@ public abstract class BaseWorkerContext extends I18nBase implements IWorkerConte
     synchronized (lock) {
 
       if (version == null) {
-        if (uri.contains("|")) {
-          version = uri.substring(uri.lastIndexOf("|")+1);
-          uri = uri.substring(0, uri.lastIndexOf("|"));
+        var split = CanonicalPair.of(uri);
+        if (split.hasVersion()) {
+          version = split.getVersion();
+          uri = split.getUrl();
         }
       } else {
         assert !uri.contains("|");

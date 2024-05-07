@@ -32,6 +32,7 @@ import org.hl7.fhir.r4b.terminologies.CodeSystemUtilities;
 import org.hl7.fhir.r4b.utils.EOperationOutcome;
 import org.hl7.fhir.r4b.utils.ToolingExtensions;
 import org.hl7.fhir.r4b.utils.XVerExtensionManager;
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.utilities.xhtml.NodeType;
 import org.hl7.fhir.utilities.xhtml.XhtmlNode;
@@ -152,11 +153,12 @@ public abstract class ResourceRenderer extends DataRenderer {
       x.code().tx(url);
     } else {
       CanonicalResource cr = (CanonicalResource) target;
-      if (url.contains("|")) {
+      var split = CanonicalPair.of(url);
+      if (split.hasVersion()) {
         if (target.hasUserData("path")) {
           x.ah(target.getUserString("path")).tx(cr.present() + " (version " + cr.getVersion() + ")");
         } else {
-          url = url.substring(0, url.indexOf("|"));
+          url = split.getUrl();
           x.code().tx(url);
           x.tx(": " + cr.present() + " (version " + cr.getVersion() + ")");
         }

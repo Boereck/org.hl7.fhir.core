@@ -34,6 +34,8 @@ package org.hl7.fhir.r5.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.hl7.fhir.utilities.CanonicalPair;
 import org.hl7.fhir.utilities.Utilities;
 import org.hl7.fhir.r5.model.Enumerations.*;
 import org.hl7.fhir.instance.model.api.IBaseDatatypeElement;
@@ -569,8 +571,9 @@ public class Coding extends DataType implements IBaseCoding, ICompositeType, ICo
         String sv = value.contains("#") ? value.substring(0, value.indexOf("#")) : value; 
         String cp = value.contains("#") ? value.substring(value.indexOf("#")+1) : null;
         
-        String system = sv.contains("|") ? sv.substring(0, sv.indexOf("|")) : sv;
-        String version = sv.contains("|") ? sv.substring(sv.indexOf("|")+1) : null;
+        var split = CanonicalPair.of(sv);
+        String system = split.getUrl();
+        String version = split.getVersion();
         
         String code = cp != null && cp.contains("'") ? cp.substring(0, cp.indexOf("'")) : cp;
         String display = cp != null && cp.contains("'") ? cp.substring(cp.indexOf("'")+1) : null;
